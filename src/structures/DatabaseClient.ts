@@ -41,6 +41,9 @@ export default class DatabaseClient {
     else return this.db.insert({ id: channel.id, guild: guild.id }).into('channels')
   }
 
+  public unmarkChannel = (guild: Guild) =>
+    this.db.delete().where('guild', guild.id).from('channels')
+
   public changeTheme = (guild: Guild, theme: number) =>
     this.db.update({ theme }).where('guild', guild.id).from('channels')
 

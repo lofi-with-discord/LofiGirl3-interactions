@@ -49,8 +49,6 @@ export default async function MarkCommand (interaction: CommandInteraction, _: a
 
     const [channelId] = (selMenuSelection as unknown as RawMessageSelectMenuInteractionData).values
     targetChannel = interaction.guild?.channels.cache.get(channelId) as GuildChannel
-
-    await selMenuSelection.defer()
   }
 
   if (!targetChannel || targetChannel.type !== 'GUILD_VOICE') return reply({ ephemeral: true, content: locale('mark_select_not_exist') })
@@ -63,8 +61,8 @@ export default async function MarkCommand (interaction: CommandInteraction, _: a
 
   reply({ content: locale('mark_success', targetVoiceChannel.name, '/') })
 
+  await player.clear()
   if (!interaction.guild?.me?.voice?.channel) {
-    await player.clear()
     await player.play(targetVoiceChannel)
   }
 }
