@@ -24,7 +24,7 @@ export default async function HelpCommand (interaction: CommandInteraction, slas
     .addFields(fields)
     .setImage('https://cdn.discordapp.com/attachments/530043751901429762/812601825568096287/Peek_2021-02-20_17-29.gif')
 
-  const url = `https://discord.com/api/oauth2/authorize?client_id=${interaction.client.user?.id}&permissions=0&scope=bot`
+  const url = `https://discord.com/api/oauth2/authorize?client_id=${interaction.client.user?.id}&permissions=0&scope=applications.commands%20bot`
   const inviteBtn = new MessageButton({ emoji: '🎉', label: locale('help_invite'), url, style: 'LINK' })
   const supportBtn = new MessageButton({ emoji: '💬', label: locale('help_support'), url: 'https://discord.com/invite/WJRtvankkB', style: 'LINK' })
   const githubBtn = new MessageButton({ emoji: '⭐', label: locale('help_github'), url: 'https://github.com/lofi-with-discord/LofiGirl3-playserver', style: 'LINK' })
