@@ -1,0 +1,38 @@
+{
+  "name": "LofiGirl3-interations",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:lofi-with-discord/LofiGirl3-interations.git",
+  "author": "Park Min Hyeok <pmhstudio.pmh@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@discordjs/rest": "^0.1.0-canary.0",
+    "@types/i18n": "^0.13.1",
+    "@types/superagent": "^4.1.12",
+    "@types/yt-search": "^2.3.2",
+    "discord-api-types": "^0.22.0",
+    "discord.js": "^13.0.0-dev.t1627906063.6e0ea02",
+    "dotenv": "^10.0.0",
+    "i18n": "^0.13.3",
+    "knex": "^0.95.9",
+    "mysql": "^2.18.1",
+    "superagent": "^6.1.0",
+    "typescript": "^4.3.5",
+    "yt-search": "^2.10.0"
+  },
+  "devDependencies": {
+    "@types/node": "^16.4.7",
+    "@typescript-eslint/eslint-plugin": "^4.28.5",
+    "@typescript-eslint/parser": "^4.28.5",
+    "eslint": "^7.12.1",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node ./dist/index.js",
+    "dev": "nodemon -e .ts --exec 'tsc && node ./dist/index.js || exit 1'"
+  }
+}
