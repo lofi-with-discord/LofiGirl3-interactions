@@ -10,12 +10,7 @@ dotenv.config()
 export default async function onReady (client: BotClient, player: PlayerClient, slash: SlashHandler) {
   if (!client.user) return
 
-  const playerAvailable = await player.check()
-
-  if (playerAvailable.statusCode !== 200) {
-    console.error('Unable to connect to the player API')
-    process.exit(-1)
-  }
+  await player.check()
 
   setInterval(async () => {
     const listenerCount = client.shard
