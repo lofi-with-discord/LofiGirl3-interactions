@@ -36,6 +36,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node ./dist/index.js",
+    "shard": "node ./native-utils/sharding.js",
     "dev": "nodemon -e .ts --exec 'tsc && node ./dist/index.js || exit 1'"
   }
 }
