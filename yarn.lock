@@ -23,15 +23,15 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@discordjs/builders@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@discordjs/builders/-/builders-0.3.0.tgz#af507c1c5a39039ebdba7233c7eb404c873b6f7a"
-  integrity sha512-yFBPqohVAtCWoDTQCYk5ubgmkiRbGpbiR4RfYGHCmV5S2YZc7j8WzfKVksjuy2o5IWRfXFsW6G2Lr+KpW41pEA==
+"@discordjs/builders@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@discordjs/builders/-/builders-0.4.0.tgz#bb41573ce4824aa9194a53b52c29c5219b610010"
+  integrity sha512-EiwLltKph6TSaPJIzJYdzNc1PnA2ZNaaE0t0ODg3ghnpVHqfgd0YX9/srsleYHW2cw1sfIq+kbM+h0etf7GWLA==
   dependencies:
     "@sindresorhus/is" "^4.0.1"
     discord-api-types "^0.22.0"
-    ow "^0.26.0"
-    ts-mixer "^5.4.1"
+    ow "^0.27.0"
+    ts-mixer "^6.0.0"
     tslib "^2.3.0"
 
 "@discordjs/collection@^0.1.6":
@@ -160,7 +160,7 @@
     "@types/cookiejar" "*"
     "@types/node" "*"
 
-"@types/ws@^7.4.5":
+"@types/ws@^7.4.7":
   version "7.4.7"
   resolved "https://registry.yarnpkg.com/@types/ws/-/ws-7.4.7.tgz#f7c390a36f7a0679aa69de2d501319f4f8d9b702"
   integrity sha512-JQbbmxZTZehdc2iszGKs5oC3NFnjeay7mtAWrdt7qNtAVK0g19muApzAy4bm9byz79xa2ZnO/BOBC2R8RC5Lww==
@@ -461,6 +461,13 @@ braces@^3.0.1:
   dependencies:
     fill-range "^7.0.1"
 
+bufferutil@^4.0.3:
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/bufferutil/-/bufferutil-4.0.3.tgz#66724b756bed23cd7c28c4d306d7994f9943cc6b"
+  integrity sha512-yEYTwGndELGvfXsImMBLop58eaGW+YdONi1fNjTINSY98tmMmFijBG6WXgdkfuLNt4imzQNtIE+eBp1PVpMCSw==
+  dependencies:
+    node-gyp-build "^4.2.0"
+
 call-bind@^1.0.0, call-bind@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/call-bind/-/call-bind-1.0.2.tgz#b1d4e89e688119c3c9a903ad30abb2f6a919be3c"
@@ -681,17 +688,16 @@ discord-api-types@^0.22.0:
   resolved "https://registry.yarnpkg.com/discord-api-types/-/discord-api-types-0.22.0.tgz#34dc57fe8e016e5eaac5e393646cd42a7e1ccc2a"
   integrity sha512-l8yD/2zRbZItUQpy7ZxBJwaLX/Bs2TGaCthRppk8Sw24LOIWg12t9JEreezPoYD0SQcC2htNNo27kYEpYW/Srg==
 
-discord.js@^13.0.0-dev.t1627906063.6e0ea02:
-  version "13.0.0-dev.t1627992462.35fa3b3"
-  resolved "https://registry.yarnpkg.com/discord.js/-/discord.js-13.0.0-dev.t1627992462.35fa3b3.tgz#fd15e2d5c143ce4cd8898c9a2d31403a37434b40"
-  integrity sha512-hycyQerBUzzrMOzFT+aO89oQY9mN7QxuMlz8bxs6BcKLj/SymfMnPZh+EiyHPAijUcVxCiPyKtPOCyifj2FnSw==
+discord.js@^13.0.1:
+  version "13.0.1"
+  resolved "https://registry.yarnpkg.com/discord.js/-/discord.js-13.0.1.tgz#58f009706d1d7587fe9ff6c6c781e4540ae085f9"
+  integrity sha512-pEODCFfxypBnGEYpSgjkn1jt70raCS1um7Zp0AXEfW1DcR29wISzQ/WeWdnjP5KTXGi0LTtkRiUjOsMgSoukxA==
   dependencies:
-    "@discordjs/builders" "^0.3.0"
+    "@discordjs/builders" "^0.4.0"
     "@discordjs/collection" "^0.2.1"
     "@discordjs/form-data" "^3.0.1"
     "@sapphire/async-queue" "^1.1.4"
-    "@types/ws" "^7.4.5"
-    abort-controller "^3.0.0"
+    "@types/ws" "^7.4.7"
     discord-api-types "^0.22.0"
     node-fetch "^2.6.1"
     ws "^7.5.1"
@@ -1720,6 +1726,11 @@ mysql@^2.18.1:
     safe-buffer "5.1.2"
     sqlstring "2.3.1"
 
+nan@^2.14.0:
+  version "2.15.0"
+  resolved "https://registry.yarnpkg.com/nan/-/nan-2.15.0.tgz#3f34a473ff18e15c1b5626b62903b5ad6e665fee"
+  integrity sha512-8ZtvEnA2c5aYCZYd1cvgdnU6cqwixRoYg70xPLWUws5ORTa/lnw+u4amixRS/Ac5U5mQVgp9pnlSUnbNWFaWZQ==
+
 natural-compare@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
@@ -1751,6 +1762,11 @@ node-fzf@~0.5.1:
     redstar "0.0.2"
     string-width "~2.1.1"
     ttys "0.0.3"
+
+node-gyp-build@^4.2.0:
+  version "4.2.3"
+  resolved "https://registry.yarnpkg.com/node-gyp-build/-/node-gyp-build-4.2.3.tgz#ce6277f853835f718829efb47db20f3e4d9c4739"
+  integrity sha512-MN6ZpzmfNCRM+3t57PTJHgHyw/h4OWnZ6mR8P5j/uZtqQr46RRuDE/P+g3n0YR/AiYXeWixZZzaip77gdICfRg==
 
 normalize-package-data@^2.3.2:
   version "2.5.0"
@@ -1817,10 +1833,10 @@ optionator@^0.9.1:
     type-check "^0.4.0"
     word-wrap "^1.2.3"
 
-ow@^0.26.0:
-  version "0.26.0"
-  resolved "https://registry.yarnpkg.com/ow/-/ow-0.26.0.tgz#5b8f61221ab31431f964caa6eaa0ed574e21a56e"
-  integrity sha512-22YUQW9d6oUSCpIQuBV25djtC1uMtpWqmtUYnuh2UHWeNMpppCFCvq3eSBIWWMDbe2UVq26kWYvBHDzOIu5NYg==
+ow@^0.27.0:
+  version "0.27.0"
+  resolved "https://registry.yarnpkg.com/ow/-/ow-0.27.0.tgz#d44da088e8184fa11de64b5813206f9f86ab68d0"
+  integrity sha512-SGnrGUbhn4VaUGdU0EJLMwZWSupPmF46hnTRII7aCLCrqixTAC5eKo8kI4/XXf1eaaI8YEVT+3FeGNJI9himAQ==
   dependencies:
     "@sindresorhus/is" "^4.0.1"
     callsites "^3.1.0"
@@ -2315,10 +2331,10 @@ to-regex-range@^5.0.1:
   dependencies:
     is-number "^7.0.0"
 
-ts-mixer@^5.4.1:
-  version "5.4.1"
-  resolved "https://registry.yarnpkg.com/ts-mixer/-/ts-mixer-5.4.1.tgz#b90db9ced48531aa17ce9184a2890d1e3c99b1e5"
-  integrity sha512-Zo9HgPCtNouDgJ+LGtrzVOjSg8+7WGQktIKLwAfaNrlOK1mWGlz1ejsAF/YqUEqAGjUTeB5fEg8gH9Aui6w9xA==
+ts-mixer@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/ts-mixer/-/ts-mixer-6.0.0.tgz#4e631d3a36e3fa9521b973b132e8353bc7267f9f"
+  integrity sha512-nXIb1fvdY5CBSrDIblLn73NW0qRDk5yJ0Sk1qPBF560OdJfQp9jhl+0tzcY09OZ9U+6GpeoI9RjwoIKFIoB9MQ==
 
 tsconfig-paths@^3.9.0:
   version "3.10.1"
@@ -2400,6 +2416,13 @@ uri-js@^4.2.2:
   dependencies:
     punycode "^2.1.0"
 
+utf-8-validate@^5.0.5:
+  version "5.0.5"
+  resolved "https://registry.yarnpkg.com/utf-8-validate/-/utf-8-validate-5.0.5.tgz#dd32c2e82c72002dc9f02eb67ba6761f43456ca1"
+  integrity sha512-+pnxRYsS/axEpkrrEpzYfNZGXp0IjC/9RIxwM5gntY4Koi8SHmUGSfxfWqxZdRxrtaoVstuOzUp/rbs3JSPELQ==
+  dependencies:
+    node-gyp-build "^4.2.0"
+
 util-deprecate@^1.0.1, util-deprecate@~1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
@@ -2474,3 +2497,10 @@ yt-search@^2.10.0:
     jsonpath-plus "~5.0.2"
     minimist "~1.2.5"
     node-fzf "~0.5.1"
+
+zlib-sync@^0.1.7:
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/zlib-sync/-/zlib-sync-0.1.7.tgz#b0b24f9428e434943e306ad586428ef8baf3ed60"
+  integrity sha512-UmciU6ZrIwtwPC8noMzq+kGMdiWwNRZ3wC0SbED4Ew5Ikqx14MqDPRs/Pbk+3rZPh5SzsOgUBs1WRE0iieddpg==
+  dependencies:
+    nan "^2.14.0"
