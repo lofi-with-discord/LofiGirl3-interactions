@@ -7,7 +7,7 @@ export default async function PingCommand (interaction: CommandInteraction, _: a
     title: locale('ping_success', interaction.client.ws.ping)
   })
 
-  interaction.reply({ embeds: [embed] })
+  interaction.editReply({ embeds: [embed] })
 }
 
 export const metadata: ApplicationCommandData = {

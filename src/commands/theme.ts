@@ -10,10 +10,8 @@ export default async function ThemeCommand (interaction: CommandInteraction, _: 
   const member = interaction.member as GuildMember
 
   function reply (options: InteractionReplyOptions) {
-    if (nextInteraction && nextInteraction.replied) nextInteraction.editReply(options)
-    else if (nextInteraction && !nextInteraction.replied) nextInteraction.reply(options)
-    else if (interaction.replied) interaction.editReply(options)
-    else interaction.reply(options)
+    if (nextInteraction) nextInteraction.editReply(options)
+    else interaction.editReply(options)
   }
 
   const themes = await db.getAllThemeDatas()
@@ -35,10 +33,12 @@ export default async function ThemeCommand (interaction: CommandInteraction, _: 
   }
 
   const selMenu = new MessageSelectMenu({ customId: `selMenu_${interaction.id}`, minValues: 1, maxValues: 1, options, placeholder: locale('play_select_voice_placeholder') })
-  interaction.reply({ embeds: [embed], components: [{ components: [selMenu], type: 1 }] })
+  interaction.editReply({ embeds: [embed], components: [{ components: [selMenu], type: 1 }] })
 
   nextInteraction = await interaction.channel?.awaitMessageComponent({ filter: (i: MessageComponentInteraction) => i.customId === `selMenu_${interaction.id}` && interaction.user.id === i.user.id })
   if (!nextInteraction) return
+
+  await nextInteraction.deferReply()
 
   selMenu.setDisabled(true)
   interaction.editReply({ embeds: [embed], components: [{ components: [selMenu], type: 1 }] })
@@ -68,6 +68,10 @@ export default async function ThemeCommand (interaction: CommandInteraction, _: 
       reply({ content: locale('theme_play_force_question', meAt.name), components: [{ components: [forceBtn], type: 1 }] })
 
       const forceInteraction = await interaction.channel?.awaitMessageComponent({ filter: (i) => i.customId === `forceBtn_${interaction.id}` && i.user.id === interaction.user.id })
+      if (!forceInteraction) return
+
+      await forceInteraction.deferReply()
+
       nextInteraction = forceInteraction
     }
   }

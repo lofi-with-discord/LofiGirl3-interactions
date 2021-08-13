@@ -25,9 +25,11 @@ export default async function registUser (interaction: CommandInteraction, db: D
   const selectMenu = new MessageSelectMenu({ customId: `locale_selection_${interaction.id}`, minValues: 1, maxValues: 1, options, placeholder: 'Click me to select a language' })
   const embed = new DefaultEmbed('oobe', null, { title: 'Select a language' })
 
-  await interaction.reply({ embeds: [embed], components: [{ components: [selectMenu], type: 1 }] })
+  await interaction.editReply({ embeds: [embed], components: [{ components: [selectMenu], type: 1 }] })
   const localeSelection = await interaction.channel?.awaitMessageComponent({ filter: (i: MessageComponentInteraction) => i.customId === `locale_selection_${interaction.id}` && interaction.user.id === i.user.id })
   if (!localeSelection) return { id: interaction.user.id, locale: '' }
+
+  await localeSelection.deferReply()
 
   const [locale] = (localeSelection as unknown as RawMessageSelectMenuInteractionData).values
   const data = { id: interaction.user.id, locale }
@@ -41,8 +43,8 @@ export default async function registUser (interaction: CommandInteraction, db: D
   if (!user) await db.appendUserData(data)
   else await db.updateUserData(data)
 
-  if (isFirstCall) localeSelection.reply({ ephemeral: true, content: i18n.__({ locale, phrase: 'locale_success_msg' }) })
-  else localeSelection.update({}).catch(() => {})
+  if (isFirstCall) localeSelection.editReply({ content: i18n.__({ locale, phrase: 'locale_success_msg' }) })
+  else localeSelection.editReply({ content: i18n.__({ locale, phrase: 'locale_success' }) })
 
   return data
 }

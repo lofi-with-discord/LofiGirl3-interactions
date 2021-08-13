@@ -10,13 +10,11 @@ export default async function MarkCommand (interaction: CommandInteraction, _: a
   const member = interaction.member as GuildMember
 
   function reply (options: InteractionReplyOptions) {
-    if (selMenuSelection && selMenuSelection.replied) selMenuSelection.editReply(options)
-    else if (selMenuSelection && !selMenuSelection.replied) selMenuSelection.reply(options)
-    else if (interaction.replied) interaction.editReply(options)
-    else interaction.reply(options)
+    if (selMenuSelection) selMenuSelection.editReply(options)
+    else interaction.editReply(options)
   }
 
-  if (!member.permissions.has('MANAGE_CHANNELS')) return interaction.reply({ ephemeral: true, content: locale('mark_no_permission', member.displayName) })
+  if (!member.permissions.has('MANAGE_CHANNELS')) return interaction.editReply({ content: locale('mark_no_permission', member.displayName) })
   let targetChannel = interaction.options.getChannel('channel') || member.voice.channel
 
   if (!targetChannel) {
@@ -39,10 +37,12 @@ export default async function MarkCommand (interaction: CommandInteraction, _: a
     }
 
     const selMenu = new MessageSelectMenu({ customId: `selMenu_${interaction.id}`, minValues: 1, maxValues: 1, options, placeholder: locale('mark_select_voice_placeholder') })
-    interaction.reply({ embeds: [embed], components: [{ components: [selMenu], type: 1 }] })
+    interaction.editReply({ embeds: [embed], components: [{ components: [selMenu], type: 1 }] })
 
     selMenuSelection = await interaction.channel?.awaitMessageComponent({ filter: (i: MessageComponentInteraction) => i.customId === `selMenu_${interaction.id}` && interaction.user.id === i.user.id })
     if (!selMenuSelection) return
+
+    await selMenuSelection.deferReply()
 
     selMenu.setDisabled(true)
     interaction.editReply({ embeds: [embed], components: [{ components: [selMenu], type: 1 }] })
@@ -51,7 +51,7 @@ export default async function MarkCommand (interaction: CommandInteraction, _: a
     targetChannel = interaction.guild?.channels.cache.get(channelId) as GuildChannel
   }
 
-  if (!targetChannel || targetChannel.type !== 'GUILD_VOICE') return reply({ ephemeral: true, content: locale('mark_select_not_exist') })
+  if (!targetChannel || targetChannel.type !== 'GUILD_VOICE') return reply({ ephemeral: true, content: locale('mark_select_not_exist', targetChannel.name) })
   const targetVoiceChannel = targetChannel as VoiceChannel
 
   if (!targetVoiceChannel.joinable) return reply({ ephemeral: true, content: locale('mark_not_joinable') })

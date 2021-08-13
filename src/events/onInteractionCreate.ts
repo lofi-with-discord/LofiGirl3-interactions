@@ -10,6 +10,8 @@ export default async function onInteractionCreate (interaction: Interaction, sla
   if (!interaction.isCommand()) return
   if (!interaction.guild) return interaction.reply(i18n.__l('dm_disallow').join('\n'))
 
+  await interaction.deferReply()
+
   const userData = await db.getUserData(interaction.user)
   if (!userData) return await registUser(interaction, db, i18n, true)
 
