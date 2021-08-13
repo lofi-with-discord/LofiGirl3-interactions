@@ -32,7 +32,7 @@ export default async function onReady (client: BotClient, player: PlayerClient, 
     }, 60 * 1000)
   }
 
-  if (process.env.REFRESH_SLASH_COMMAND_ON_READY) slash.registCachedCommands(client)
+  if (process.env.REFRESH_SLASH_COMMAND_ON_READY === 'true') slash.registCachedCommands(client)
 
   console.log(`ready ${process.env.ENVIROMENT}`)
 }
