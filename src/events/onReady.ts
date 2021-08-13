@@ -1,6 +1,6 @@
-import { Collection, Guild } from 'discord.js'
 import dotenv from 'dotenv'
 import { post } from 'superagent'
+import { Guild } from 'discord.js'
 import BotClient from '../structures/BotClient'
 import PlayerClient from '../structures/PlayerClient'
 import SlashHandler from '../structures/SlashHandler'
@@ -14,7 +14,7 @@ export default async function onReady (client: BotClient, player: PlayerClient, 
 
   setInterval(async () => {
     const listenerCount = client.shard
-      ? (await client.shard.fetchClientValues('guilds.cache') as Collection<string, Guild>[]).reduce((prev, curr) => prev + curr.reduce((prev, curr) => prev + (curr.me?.voice?.channel ? curr.me.voice.channel.members.filter((m) => !m.user.bot).size : 0), 0), 0)
+      ? (await client.shard?.fetchClientValues('guilds.cache') as Guild[][]).reduce((prev, curr) => prev + (curr.reduce((prev2, curr2) => prev2 + (curr2.me?.voice?.channel ? curr2.me.voice.channel.members.filter((m) => !m.user.bot).size : 0), 0)), 0)
       : client.guilds.cache.reduce((prev, curr) => prev + (curr.me?.voice?.channel ? curr.me.voice.channel.members.filter((m) => !m.user.bot).size : 0), 0)
 
     client.user?.setActivity(`/help | with ${listenerCount} listeners`)
