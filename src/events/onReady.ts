@@ -17,8 +17,8 @@ export default async function onReady (client: BotClient, player: PlayerClient, 
       ? (await client.shard?.fetchClientValues('guilds.cache') as Guild[][]).reduce((prev, curr) => prev + (curr.reduce((prev2, curr2) => prev2 + (curr2.me?.voice?.channel ? curr2.me.voice.channel.members.filter((m) => !m.user.bot).size : 0), 0)), 0)
       : client.guilds.cache.reduce((prev, curr) => prev + (curr.me?.voice?.channel ? curr.me.voice.channel.members.filter((m) => !m.user.bot).size : 0), 0)
 
-    client.user?.setActivity(`/help | with ${listenerCount} listeners`)
-  }, 5000)
+    client.user?.setActivity(`/help | with ${listenerCount} listeners ${client.shard ? 'on shard #' + client.shard.ids[0] : ''}`)
+  }, 30000)
 
   if (client.koreanbots) {
     setInterval(async () => {
