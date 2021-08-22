@@ -10,8 +10,8 @@ export default async function ThemeCommand (interaction: CommandInteraction, _: 
   const member = interaction.member as GuildMember
 
   function reply (options: InteractionReplyOptions) {
-    if (nextInteraction) nextInteraction.editReply(options)
-    else interaction.editReply(options)
+    if (nextInteraction) nextInteraction.editReply(options).catch(() => {})
+    else interaction.editReply(options).catch(() => {})
   }
 
   const themes = await db.getAllThemeDatas()
@@ -33,15 +33,15 @@ export default async function ThemeCommand (interaction: CommandInteraction, _: 
   }
 
   const selMenu = new MessageSelectMenu({ customId: `selMenu_${interaction.id}`, minValues: 1, maxValues: 1, options, placeholder: locale('play_select_voice_placeholder') })
-  interaction.editReply({ embeds: [embed], components: [{ components: [selMenu], type: 1 }] })
+  interaction.editReply({ embeds: [embed], components: [{ components: [selMenu], type: 1 }] }).catch(() => {})
 
   nextInteraction = await interaction.channel?.awaitMessageComponent({ filter: (i: MessageComponentInteraction) => i.customId === `selMenu_${interaction.id}` && interaction.user.id === i.user.id })
   if (!nextInteraction) return
 
-  await nextInteraction.deferReply()
+  await nextInteraction.deferReply().catch(() => {})
 
   selMenu.setDisabled(true)
-  interaction.editReply({ embeds: [embed], components: [{ components: [selMenu], type: 1 }] })
+  interaction.editReply({ embeds: [embed], components: [{ components: [selMenu], type: 1 }] }).catch(() => {})
 
   const [themeId] = (nextInteraction as unknown as RawMessageSelectMenuInteractionData).values
   const chosenTheme = await db.getThemeData(parseInt(themeId))
@@ -70,7 +70,7 @@ export default async function ThemeCommand (interaction: CommandInteraction, _: 
       const forceInteraction = await interaction.channel?.awaitMessageComponent({ filter: (i) => i.customId === `forceBtn_${interaction.id}` && i.user.id === interaction.user.id })
       if (!forceInteraction) return
 
-      await forceInteraction.deferReply()
+      await forceInteraction.deferReply().catch(() => {})
 
       nextInteraction = forceInteraction
     }

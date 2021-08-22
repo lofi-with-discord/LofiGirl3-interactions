@@ -10,8 +10,8 @@ export default async function PlayCommand (interaction: CommandInteraction, _: a
   const member = interaction.member as GuildMember
 
   function reply (options: InteractionReplyOptions) {
-    if (nextInteraction) nextInteraction.editReply(options)
-    else interaction.editReply(options)
+    if (nextInteraction) nextInteraction.editReply(options).catch(() => {})
+    else interaction.editReply(options).catch(() => {})
   }
 
   let targetChannel = interaction.options.getChannel('channel') || member.voice.channel
@@ -37,15 +37,15 @@ export default async function PlayCommand (interaction: CommandInteraction, _: a
     }
 
     const selMenu = new MessageSelectMenu({ customId: `selMenu_${interaction.id}`, minValues: 1, maxValues: 1, options, placeholder: locale('play_select_voice_placeholder') })
-    interaction.editReply({ embeds: [embed], components: [{ components: [selMenu], type: 1 }] })
+    interaction.editReply({ embeds: [embed], components: [{ components: [selMenu], type: 1 }] }).catch(() => {})
 
     nextInteraction = await interaction.channel?.awaitMessageComponent({ filter: (i: MessageComponentInteraction) => i.customId === `selMenu_${interaction.id}` && interaction.user.id === i.user.id })
     if (!nextInteraction) return
 
-    await nextInteraction.deferReply()
+    await nextInteraction.deferReply().catch(() => {})
 
     selMenu.setDisabled(true)
-    interaction.editReply({ embeds: [embed], components: [{ components: [selMenu], type: 1 }] })
+    interaction.editReply({ embeds: [embed], components: [{ components: [selMenu], type: 1 }] }).catch(() => {})
 
     const [channelId] = (nextInteraction as unknown as RawMessageSelectMenuInteractionData).values
     targetChannel = interaction.guild?.channels.cache.get(channelId) as GuildChannel

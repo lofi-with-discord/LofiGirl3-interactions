@@ -11,7 +11,7 @@ export default async function HelpCommand (interaction: CommandInteraction, slas
 
   const nextBtn = new MessageButton({ customId: `next_${interaction.id}`, emoji: '➡️', style: 'SECONDARY' })
 
-  interaction.editReply({ embeds: [embed], components: [{ components: [nextBtn], type: 1 }] })
+  interaction.editReply({ embeds: [embed], components: [{ components: [nextBtn], type: 1 }] }).catch(() => {})
   const nextInteraction = await interaction.channel?.awaitMessageComponent({ filter: (i) => i.customId === `next_${interaction.id}` && i.user.id === interaction.user.id })
   if (!nextInteraction) return
 
@@ -32,7 +32,7 @@ export default async function HelpCommand (interaction: CommandInteraction, slas
   const githubBtn = new MessageButton({ emoji: '⭐', label: locale('help_github'), url: 'https://github.com/lofi-with-discord/LofiGirl3-playserver', style: 'LINK' })
   const koreanbotsBtn = new MessageButton({ emoji: '❤️', label: locale('help_koreanbots'), url: 'https://koreanbots.dev/bots/763033945767280650', style: 'LINK' })
 
-  interaction.editReply({ embeds: [embed2], components: [{ components: [inviteBtn, supportBtn, githubBtn, koreanbotsBtn], type: 1 }] })
+  interaction.editReply({ embeds: [embed2], components: [{ components: [inviteBtn, supportBtn, githubBtn, koreanbotsBtn], type: 1 }] }).catch(() => {})
 }
 
 export const metadata: ApplicationCommandData = {

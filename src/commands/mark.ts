@@ -10,11 +10,11 @@ export default async function MarkCommand (interaction: CommandInteraction, _: a
   const member = interaction.member as GuildMember
 
   function reply (options: InteractionReplyOptions) {
-    if (selMenuSelection) selMenuSelection.editReply(options)
-    else interaction.editReply(options)
+    if (selMenuSelection) selMenuSelection.editReply(options).catch(() => {})
+    else interaction.editReply(options).catch(() => {})
   }
 
-  if (!member.permissions.has('MANAGE_CHANNELS')) return interaction.editReply({ content: locale('mark_no_permission', member.displayName) })
+  if (!member.permissions.has('MANAGE_CHANNELS')) return interaction.editReply({ content: locale('mark_no_permission', member.displayName) }).catch(() => {})
   let targetChannel = interaction.options.getChannel('channel') || member.voice.channel
 
   if (!targetChannel) {
@@ -37,15 +37,15 @@ export default async function MarkCommand (interaction: CommandInteraction, _: a
     }
 
     const selMenu = new MessageSelectMenu({ customId: `selMenu_${interaction.id}`, minValues: 1, maxValues: 1, options, placeholder: locale('mark_select_voice_placeholder') })
-    interaction.editReply({ embeds: [embed], components: [{ components: [selMenu], type: 1 }] })
+    interaction.editReply({ embeds: [embed], components: [{ components: [selMenu], type: 1 }] }).catch(() => {})
 
     selMenuSelection = await interaction.channel?.awaitMessageComponent({ filter: (i: MessageComponentInteraction) => i.customId === `selMenu_${interaction.id}` && interaction.user.id === i.user.id })
     if (!selMenuSelection) return
 
-    await selMenuSelection.deferReply()
+    await selMenuSelection.deferReply().catch(() => {})
 
     selMenu.setDisabled(true)
-    interaction.editReply({ embeds: [embed], components: [{ components: [selMenu], type: 1 }] })
+    interaction.editReply({ embeds: [embed], components: [{ components: [selMenu], type: 1 }] }).catch(() => {})
 
     const [channelId] = (selMenuSelection as unknown as RawMessageSelectMenuInteractionData).values
     targetChannel = interaction.guild?.channels.cache.get(channelId) as GuildChannel

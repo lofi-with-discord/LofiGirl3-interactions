@@ -7,7 +7,7 @@ export default async function LeaveCommand (interaction: CommandInteraction, _: 
   const meAt = interaction.guild?.me?.voice?.channel
   const userAt = member.voice.channel
 
-  if (!meAt || meAt.type !== 'GUILD_VOICE') return interaction.editReply({ content: locale('leave_no_voice') })
+  if (!meAt || meAt.type !== 'GUILD_VOICE') return interaction.editReply({ content: locale('leave_no_voice') }).catch(() => {})
 
   const movePerm = member.permissionsIn(meAt).has('MOVE_MEMBERS')
   const membersIn = meAt.members.filter((m) => !m.user.bot && m.id !== member.id).size
@@ -15,20 +15,20 @@ export default async function LeaveCommand (interaction: CommandInteraction, _: 
 
   if (membersIn < 1) {
     await player.stop(meAt)
-    interaction.editReply(locale('leave_success'))
+    interaction.editReply(locale('leave_success')).catch(() => {})
     return
   }
 
-  if (!movePerm) return interaction.editReply({ content: locale('leave_force_fail_' + userIn, meAt.name) })
+  if (!movePerm) return interaction.editReply({ content: locale('leave_force_fail_' + userIn, meAt.name) }).catch(() => {})
 
   const forceBtn = new MessageButton({ customId: `forceBtn_${interaction.id}`, emoji: '🔨', style: 'DANGER' })
-  interaction.editReply({ content: locale('leave_force_question_' + userIn, meAt.name), components: [{ components: [forceBtn], type: 1 }] })
+  interaction.editReply({ content: locale('leave_force_question_' + userIn, meAt.name), components: [{ components: [forceBtn], type: 1 }] }).catch(() => {})
 
   const forceInteraction = await interaction.channel?.awaitMessageComponent({ filter: (i) => i.customId === `forceBtn_${interaction.id}` && i.user.id === interaction.user.id })
   if (!forceInteraction) return
   forceInteraction.update({})
 
-  interaction.editReply({ content: locale('leave_success'), components: [] })
+  interaction.editReply({ content: locale('leave_success'), components: [] }).catch(() => {})
   await player.stop(meAt)
 }
 
