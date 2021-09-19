@@ -31,8 +31,15 @@ export default async function HelpCommand (interaction: CommandInteraction, slas
   const supportBtn = new MessageButton({ emoji: '💬', label: locale('help_support'), url: 'https://discord.com/invite/WJRtvankkB', style: 'LINK' })
   const githubBtn = new MessageButton({ emoji: '⭐', label: locale('help_github'), url: 'https://github.com/lofi-with-discord/LofiGirl3-playserver', style: 'LINK' })
   const koreanbotsBtn = new MessageButton({ emoji: '❤️', label: locale('help_koreanbots'), url: 'https://koreanbots.dev/bots/763033945767280650', style: 'LINK' })
+  const termsBtn = new MessageButton({ emoji: '❤️', label: locale('help_terms'), url: 'https://lofi.pmh.codes/#terms', style: 'LINK' })
 
-  interaction.editReply({ embeds: [embed2], components: [{ components: [inviteBtn, supportBtn, githubBtn, koreanbotsBtn], type: 1 }] }).catch(() => {})
+  interaction.editReply({
+    embeds: [embed2],
+    components: [
+      { components: [inviteBtn, supportBtn, githubBtn, koreanbotsBtn], type: 1 },
+      { components: [termsBtn], type: 1 }
+    ]
+  }).catch(() => {})
 }
 
 export const metadata: ApplicationCommandData = {
