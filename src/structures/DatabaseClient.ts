@@ -51,5 +51,13 @@ export default class DatabaseClient {
     (await this.db.select('*').from('themes').where('id', id).limit(1))[0]
 
   public getAllThemeDatas = (): Promise<ThemeData[]> =>
-    this.db.select('*').from('themes')
+    this.sortThemes(this.db.select('*').from('themes'))
+
+  private async sortThemes (themes: Promise<ThemeData[]>) {
+    const channels = await this.db.select('*').from('channels')
+
+    return (await themes).sort((a, b) =>
+      channels.filter((c) => c.theme === b.id).length - channels.filter((c) => c.theme === a.id).length
+    )
+  }
 }
