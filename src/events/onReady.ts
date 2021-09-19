@@ -32,4 +32,5 @@ export default async function onReady (client: BotClient, player: PlayerClient, 
   if (process.env.REFRESH_SLASH_COMMAND_ON_READY === 'true') slash.registCachedCommands(client)
 
   console.log(`ready ${process.env.ENVIROMENT}`)
+  console.log(`for debug: there are ${client.guilds.cache.reduce((prev, curr) => prev + curr.memberCount, 0)} members in shard`)
 }
