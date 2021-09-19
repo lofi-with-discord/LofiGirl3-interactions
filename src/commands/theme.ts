@@ -22,12 +22,14 @@ export default async function ThemeCommand (interaction: CommandInteraction, _: 
   })
 
   const options = [] as MessageSelectOptionData[]
-  for (const theme of themes) {
+  for (const themeIndex in themes) {
+    const theme = themes[themeIndex]
+
     options.push({
       label: theme.name,
       value: String(theme.id),
       description: theme.url,
-      emoji: '💿',
+      emoji: ['🥇', '🥈', '🥉'][themeIndex] || '💿',
       default: false
     })
   }
