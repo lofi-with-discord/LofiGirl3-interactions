@@ -1,13 +1,13 @@
-import { Locale } from '../types'
+import { CommandData } from '../types'
 import { DefaultEmbed } from '../utils'
-import { ApplicationCommandData, CommandInteraction } from 'discord.js'
+import { ApplicationCommandData } from 'discord.js'
+import { replyInteraction } from '../scripts/interactionReply'
 
-export default async function PingCommand (interaction: CommandInteraction, _: any, __: any, locale: Locale) {
-  const embed = new DefaultEmbed('ping', interaction.guild?.me?.roles.color, {
-    title: locale('ping_success', interaction.client.ws.ping)
-  })
+export default function PingCommand ({ interaction, locale }: CommandData) {
+  const embed = new DefaultEmbed('ping')
+    .setTitle(locale('ping_success', interaction.client.ws.ping))
 
-  interaction.editReply({ embeds: [embed] }).catch(() => {})
+  replyInteraction(interaction, embed)
 }
 
 export const metadata: ApplicationCommandData = {

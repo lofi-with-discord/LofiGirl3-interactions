@@ -1,26 +1,29 @@
-import { Locale } from '../types'
+import { CommandData } from '../types'
 import { DefaultEmbed } from '../utils'
-import PlayerClient from '../structures/PlayerClient'
-import DatabaseClient from '../structures/DatabaseClient'
-import { RawMessageSelectMenuInteractionData } from 'discord.js/typings/rawDataTypes'
-import { ApplicationCommandData, CommandInteraction, GuildChannel, GuildMember, InteractionReplyOptions, MessageComponentInteraction, MessageSelectMenu, MessageSelectOptionData, VoiceChannel } from 'discord.js'
+import { replyInteraction } from '../scripts/interactionReply'
+import { createSelectMenu, resolveMenuSelection } from '../scripts/selectMenu'
 
-export default async function MarkCommand (interaction: CommandInteraction, _: any, db: DatabaseClient, locale: Locale, player: PlayerClient) {
-  let selMenuSelection: MessageComponentInteraction | undefined
+import {
+  ApplicationCommandData,
+  CommandInteraction,
+  GuildChannel,
+  GuildMember,
+  MessageSelectOptionData,
+  VoiceChannel
+} from 'discord.js'
+
+export default async function MarkCommand ({ interaction, db, locale, player }: CommandData) {
   const member = interaction.member as GuildMember
-
-  function reply (options: InteractionReplyOptions) {
-    if (selMenuSelection) selMenuSelection.editReply(options).catch(() => {})
-    else interaction.editReply(options).catch(() => {})
-  }
-
-  if (!member.permissions.has('MANAGE_CHANNELS')) return interaction.editReply({ content: locale('mark_no_permission', member.displayName) }).catch(() => {})
   let targetChannel = interaction.options.getChannel('channel') || member.voice.channel
 
+  if (!member.permissions.has('MANAGE_CHANNELS')) {
+    replyInteraction(interaction, locale('mark_no_permission', member.displayName))
+    return
+  }
+
   if (!targetChannel) {
-    const embed = new DefaultEmbed('mark', interaction.guild?.me?.roles.color, {
-      title: locale('mark_select_voice')
-    })
+    const embed = new DefaultEmbed('mark')
+      .setTitle(locale('mark_select_voice'))
 
     const options = [] as MessageSelectOptionData[]
     for (const channelId of interaction.guild?.channels.cache.keys()!) {
@@ -36,34 +39,36 @@ export default async function MarkCommand (interaction: CommandInteraction, _: a
       })
     }
 
-    const selMenu = new MessageSelectMenu({ customId: `selMenu_${interaction.id}`, minValues: 1, maxValues: 1, options, placeholder: locale('mark_select_voice_placeholder') })
-    interaction.editReply({ embeds: [embed], components: [{ components: [selMenu], type: 1 }] }).catch(() => {})
+    const selMenu = createSelectMenu(interaction, options, locale('mark_select_voice_placeholder'))
+    replyInteraction(interaction, embed, selMenu)
 
-    selMenuSelection = await interaction.channel?.awaitMessageComponent({ filter: (i: MessageComponentInteraction) => i.customId === `selMenu_${interaction.id}` && interaction.user.id === i.user.id })
-    if (!selMenuSelection) return
-
-    await selMenuSelection.deferReply().catch(() => {})
+    const res = await resolveMenuSelection(interaction)
+    if (!res) return
 
     selMenu.setDisabled(true)
-    interaction.editReply({ embeds: [embed], components: [{ components: [selMenu], type: 1 }] }).catch(() => {})
+    replyInteraction(interaction, embed, selMenu)
 
-    const [channelId] = (selMenuSelection as unknown as RawMessageSelectMenuInteractionData).values
-    targetChannel = interaction.guild?.channels.cache.get(channelId) as GuildChannel
+    interaction = res.interaction! as unknown as CommandInteraction
+    targetChannel = interaction.guild?.channels.cache.get(res.result!) as GuildChannel
   }
 
-  if (!targetChannel || targetChannel.type !== 'GUILD_VOICE') return reply({ ephemeral: true, content: locale('mark_select_not_exist', targetChannel.name) })
+  if (!targetChannel || targetChannel.type !== 'GUILD_VOICE') {
+    replyInteraction(interaction, locale('mark_select_not_exist', targetChannel.name))
+    return
+  }
+
   const targetVoiceChannel = targetChannel as VoiceChannel
 
-  if (!targetVoiceChannel.joinable) return reply({ ephemeral: true, content: locale('mark_not_joinable') })
-  if (!targetVoiceChannel.speakable) return reply({ ephemeral: true, content: locale('mark_not_speakable') })
+  if (!targetVoiceChannel.joinable) return replyInteraction(interaction, locale('mark_not_joinable'))
+  if (!targetVoiceChannel.speakable) return replyInteraction(interaction, locale('mark_not_speakable'))
 
   await db.markChannel(interaction.guild!, targetVoiceChannel)
 
-  reply({ content: locale('mark_success', targetVoiceChannel.name, '/') })
+  replyInteraction(interaction, locale('mark_success', targetVoiceChannel.name, '/'))
 
-  await player.clear()
+  player.clear()
   if (!interaction.guild?.me?.voice?.channel) {
-    await player.play(targetVoiceChannel)
+    player.play(targetVoiceChannel)
   }
 }
 

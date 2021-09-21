@@ -1,35 +1,43 @@
-import { Locale } from '../types'
-import PlayerClient from '../structures/PlayerClient'
-import { ApplicationCommandData, CommandInteraction, GuildMember, MessageButton } from 'discord.js'
+import { CommandData } from '../types'
+import { replyInteraction } from '../scripts/interactionReply'
+import { createButton, resolveButton } from '../scripts/button'
+import { ApplicationCommandData, GuildMember } from 'discord.js'
 
-export default async function LeaveCommand (interaction: CommandInteraction, _: any, __: any, locale: Locale, player: PlayerClient) {
+export default async function LeaveCommand ({ interaction, locale, player }: CommandData) {
   const member = interaction.member as GuildMember
   const meAt = interaction.guild?.me?.voice?.channel
   const userAt = member.voice.channel
 
-  if (!meAt || meAt.type !== 'GUILD_VOICE') return interaction.editReply({ content: locale('leave_no_voice') }).catch(() => {})
+  if (!meAt || meAt.type !== 'GUILD_VOICE') {
+    replyInteraction(interaction, locale('leave_no_voice'))
+    return
+  }
 
   const movePerm = member.permissionsIn(meAt).has('MOVE_MEMBERS')
   const membersIn = meAt.members.filter((m) => !m.user.bot && m.id !== member.id).size
   const userIn = (!userAt || meAt.id !== userAt.id) ? 1 : 2
 
   if (membersIn < 1) {
-    await player.stop(meAt)
-    interaction.editReply(locale('leave_success')).catch(() => {})
+    player.stop(meAt)
+    replyInteraction(interaction, locale('leave_success'))
     return
   }
 
-  if (!movePerm) return interaction.editReply({ content: locale('leave_force_fail_' + userIn, meAt.name) }).catch(() => {})
+  if (!movePerm) {
+    replyInteraction(interaction, locale('leave_force_fail_' + userIn, meAt.name))
+    return
+  }
 
-  const forceBtn = new MessageButton({ customId: `forceBtn_${interaction.id}`, emoji: '🔨', style: 'DANGER' })
-  interaction.editReply({ content: locale('leave_force_question_' + userIn, meAt.name), components: [{ components: [forceBtn], type: 1 }] }).catch(() => {})
+  const forceBtn = createButton(interaction, '🔨', 'DANGER')
+  replyInteraction(interaction, locale('leave_force_question_' + userIn, meAt.name), forceBtn)
 
-  const forceInteraction = await interaction.channel?.awaitMessageComponent({ filter: (i) => i.customId === `forceBtn_${interaction.id}` && i.user.id === interaction.user.id })
+  const forceInteraction = await resolveButton(interaction)
   if (!forceInteraction) return
-  forceInteraction.update({})
 
-  interaction.editReply({ content: locale('leave_success'), components: [] }).catch(() => {})
-  await player.stop(meAt)
+  forceInteraction.update({})
+  replyInteraction(interaction, locale('leave_success'))
+
+  player.stop(meAt)
 }
 
 export const metadata: ApplicationCommandData = {

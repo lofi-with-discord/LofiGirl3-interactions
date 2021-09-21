@@ -1,36 +1,31 @@
-import dotenv from 'dotenv'
+import _ from '../consts'
+
 import { post } from 'superagent'
-import BotClient from '../structures/BotClient'
-import PlayerClient from '../structures/PlayerClient'
-import SlashHandler from '../structures/SlashHandler'
+import BotClient from '../classes/BotClient'
+import SlashHandler from '../classes/SlashHandler'
 
-dotenv.config()
-
-export default async function onReady (client: BotClient, player: PlayerClient, slash: SlashHandler) {
+export default async function onReady (client: BotClient, slash: SlashHandler) {
   if (!client.user) return
 
-  await player.check()
+  const sendStatus = () =>
+    client.user?.setActivity(_.BOT_ACTIVITY(client.voiceListenerCount, client.shard))
 
-  setInterval(async () => {
-    const listenerCount = client.guilds.cache.reduce((prev, curr) => prev + (curr.me?.voice?.channel ? curr.me.voice.channel.members.filter((m) => !m.user.bot).size : 0), 0)
-
-    client.user?.setActivity(`/help | with ${listenerCount} listeners ${client.shard ? 'on shard #' + client.shard.ids[0] : ''}`)
-  }, 30000)
+  setInterval(sendStatus, _.BOT_ACTIVITY_INTERVAL)
 
   if (client.koreanbots) {
     setInterval(async () => {
-      const servers = client.shard
-        ? (await client.shard.fetchClientValues('guilds.cache.size') as number[]).reduce((prev: number, curr: number) => prev + curr, 0)
-        : client.guilds.cache.size
+      const servers = client.totalGuildCount()
 
-      await post(`https://koreanbots.dev/api/v2/bots/${client.user?.id}/stats`)
+      await post(_.KOREANBOTS_GUILD_ENDPOINT(client))
         .set('Authorization', client.koreanbots!)
         .send({ servers }).catch(() => {})
     }, 60 * 1000)
   }
 
-  if (process.env.REFRESH_SLASH_COMMAND_ON_READY === 'true') slash.registCachedCommands(client)
-
   console.log(`ready ${process.env.ENVIROMENT}`)
-  console.log(`for debug: there are ${client.guilds.cache.reduce((prev, curr) => prev + curr.memberCount, 0)} members in shard`)
+  console.log(`for debug: there are ${client.totalMemberCount} members in shard`)
+
+  if (process.env.REFRESH_SLASH_COMMAND_ON_READY !== 'true') return
+
+  await slash.registCachedCommands(client)
 }

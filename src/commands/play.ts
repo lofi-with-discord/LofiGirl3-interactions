@@ -1,26 +1,27 @@
-import { Locale } from '../types'
+import { CommandData } from '../types'
 import { DefaultEmbed, getYtInfo } from '../utils'
-import PlayerClient from '../structures/PlayerClient'
-import DatabaseClient from '../structures/DatabaseClient'
-import { RawMessageSelectMenuInteractionData } from 'discord.js/typings/rawDataTypes'
-import { ApplicationCommandData, CommandInteraction, GuildChannel, GuildMember, InteractionReplyOptions, MessageButton, MessageComponentInteraction, MessageSelectMenu, MessageSelectOptionData, VoiceChannel } from 'discord.js'
+import { replyInteraction } from '../scripts/interactionReply'
+import { createButton, resolveButton } from '../scripts/button'
+import { createSelectMenu, resolveMenuSelection } from '../scripts/selectMenu'
 
-export default async function PlayCommand (interaction: CommandInteraction, _: any, db: DatabaseClient, locale: Locale, player: PlayerClient) {
-  let nextInteraction: MessageComponentInteraction | undefined
+import {
+  ApplicationCommandData,
+  CommandInteraction,
+  GuildChannel,
+  GuildMember,
+  MessageSelectOptionData,
+  VoiceChannel
+} from 'discord.js'
+
+export default async function PlayCommand ({ interaction, db, locale, player }: CommandData) {
   const member = interaction.member as GuildMember
-
-  function reply (options: InteractionReplyOptions) {
-    if (nextInteraction) nextInteraction.editReply(options).catch(() => {})
-    else interaction.editReply(options).catch(() => {})
-  }
-
-  let targetChannel = interaction.options.getChannel('channel') || member.voice.channel
   const meAt = interaction.guild?.me?.voice.channel
 
+  let targetChannel = interaction.options.getChannel('channel') || member.voice.channel
+
   if (!targetChannel) {
-    const embed = new DefaultEmbed('mark', interaction.guild?.me?.roles.color, {
-      title: locale('play_select_voice')
-    })
+    const embed = new DefaultEmbed('mark')
+      .setTitle(locale('play_select_voice'))
 
     const options = [] as MessageSelectOptionData[]
     for (const channelId of interaction.guild?.channels.cache.keys()!) {
@@ -36,39 +37,40 @@ export default async function PlayCommand (interaction: CommandInteraction, _: a
       })
     }
 
-    const selMenu = new MessageSelectMenu({ customId: `selMenu_${interaction.id}`, minValues: 1, maxValues: 1, options, placeholder: locale('play_select_voice_placeholder') })
-    interaction.editReply({ embeds: [embed], components: [{ components: [selMenu], type: 1 }] }).catch(() => {})
+    const selMenu = createSelectMenu(interaction, options, locale('play_select_voice_placeholder'))
+    replyInteraction(interaction, selMenu, embed)
 
-    nextInteraction = await interaction.channel?.awaitMessageComponent({ filter: (i: MessageComponentInteraction) => i.customId === `selMenu_${interaction.id}` && interaction.user.id === i.user.id })
-    if (!nextInteraction) return
-
-    await nextInteraction.deferReply().catch(() => {})
+    const res = await resolveMenuSelection(interaction)
+    if (!res) return
 
     selMenu.setDisabled(true)
-    interaction.editReply({ embeds: [embed], components: [{ components: [selMenu], type: 1 }] }).catch(() => {})
+    replyInteraction(interaction, selMenu, embed)
 
-    const [channelId] = (nextInteraction as unknown as RawMessageSelectMenuInteractionData).values
-    targetChannel = interaction.guild?.channels.cache.get(channelId) as GuildChannel
+    interaction = res.interaction as unknown as CommandInteraction
+    targetChannel = interaction.guild?.channels.cache.get(res.result!) as GuildChannel
   }
 
-  if (!targetChannel || targetChannel.type !== 'GUILD_VOICE') return reply({ ephemeral: true, content: locale('play_select_not_exist', targetChannel.name) })
+  if (!targetChannel || targetChannel.type !== 'GUILD_VOICE') {
+    replyInteraction(interaction, locale('play_select_not_exist', targetChannel.name))
+    return
+  }
+
   const targetVoiceChannel = targetChannel as VoiceChannel
 
-  if (!targetVoiceChannel.joinable) return reply({ ephemeral: true, content: locale('play_not_joinable') })
-  if (!targetVoiceChannel.speakable) return reply({ ephemeral: true, content: locale('play_not_speakable') })
+  if (!targetVoiceChannel.joinable) return replyInteraction(interaction, locale('play_not_joinable'))
+  if (!targetVoiceChannel.speakable) return replyInteraction(interaction, locale('play_not_speakable'))
 
   if (meAt) {
     const membersIn = meAt.members.filter((m) => !m.user.bot && m.id !== interaction.user.id).size
     const movePerm = member.permissions.has('MOVE_MEMBERS')
 
     if (membersIn > 1) {
-      if (!movePerm) return reply({ ephemeral: true, content: locale('play_force_fail', meAt.name) })
+      if (!movePerm) return replyInteraction(interaction, locale('play_force_fail', meAt.name))
 
-      const forceBtn = new MessageButton({ customId: `forceBtn_${interaction.id}`, emoji: '🔨', style: 'DANGER' })
-      reply({ content: locale('play_force_question', meAt.name), components: [{ components: [forceBtn], type: 1 }] })
+      const forceBtn = createButton(interaction, '🔨', 'DANGER')
+      replyInteraction(interaction, locale('play_force_question', meAt.name), forceBtn)
 
-      const forceInteraction = await interaction.channel?.awaitMessageComponent({ filter: (i) => i.customId === `forceBtn_${interaction.id}` && i.user.id === interaction.user.id })
-      nextInteraction = forceInteraction
+      interaction = await resolveButton(interaction)! as unknown as CommandInteraction
     }
   }
 
@@ -77,18 +79,18 @@ export default async function PlayCommand (interaction: CommandInteraction, _: a
   const themeNo = channelData?.theme || 1
   const themeData = await db.getThemeData(themeNo)
 
-  if (!themeData) return reply({ ephemeral: true, content: locale('play_theme_fail', '/') })
-  await player.play(targetVoiceChannel)
+  if (!themeData) return replyInteraction(interaction, locale('play_theme_fail', '/'))
+  player.play(targetVoiceChannel)
 
   const data = await getYtInfo(themeData.url)
 
-  const embed = new DefaultEmbed('play', interaction.guild?.me?.roles.color, {
-    title: data.title,
-    description: locale('play_detail', data.author.name, data.url)
-  }).setImage(data.image)
+  const embed = new DefaultEmbed('play')
+    .setTitle(data.title)
+    .setImage(data.image)
     .setFooter(locale('play_detail_footer', '/'))
+    .setDescription(locale('play_detail', data.author.name, data.url))
 
-  reply({ embeds: [embed] })
+  replyInteraction(interaction, embed)
 }
 
 export const metadata: ApplicationCommandData = {

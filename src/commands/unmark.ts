@@ -1,16 +1,18 @@
-import { Locale } from '../types'
-import PlayerClient from '../structures/PlayerClient'
-import DatabaseClient from '../structures/DatabaseClient'
-import { ApplicationCommandData, CommandInteraction, GuildMember } from 'discord.js'
+import { CommandData } from '../types'
+import { replyInteraction } from '../scripts/interactionReply'
+import { ApplicationCommandData, GuildMember } from 'discord.js'
 
-export default async function MarkCommand (interaction: CommandInteraction, _: any, db: DatabaseClient, locale: Locale, player: PlayerClient) {
+export default async function MarkCommand ({ interaction, db, locale, player }: CommandData) {
   const member = interaction.member as GuildMember
-  if (!member.permissions.has('MANAGE_CHANNELS')) return interaction.editReply({ content: locale('unmark_no_permission', member.displayName) }).catch(() => {})
+
+  if (!member.permissions.has('MANAGE_CHANNELS')) {
+    replyInteraction(interaction, locale('unmark_no_permission', member.displayName))
+    return
+  }
 
   await db.unmarkChannel(interaction.guild!)
-
-  interaction.editReply(locale('unmark_success', '/')).catch(() => {})
-  await player.clear()
+  await replyInteraction(interaction, locale('unmark_success', '/'))
+  player.clear()
 }
 
 export const metadata: ApplicationCommandData = {

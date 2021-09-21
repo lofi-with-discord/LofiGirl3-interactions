@@ -1,11 +1,12 @@
-import path from 'path'
+import _ from '../consts'
+
 import dotenv from 'dotenv'
 import { readdirSync } from 'fs'
 import BotClient from './BotClient'
+import PlayerClient from './PlayerClient'
 import { Command, Locale } from '../types'
 import DatabaseClient from './DatabaseClient'
 import { ApplicationCommandData, CommandInteraction } from 'discord.js'
-import PlayerClient from './PlayerClient'
 
 dotenv.config()
 
@@ -15,13 +16,12 @@ export default class SlashHandler {
   constructor () {
     this.commands = new Map()
 
-    const commandPath = path.join(__dirname, '..', 'commands')
+    const commandPath = _.COMMANDS_PATH
     const commandFiles = readdirSync(commandPath)
 
     for (const commandFile of commandFiles) {
       const commandName = commandFile.split('.').slice(0, -1).join('.')
-
-      this.commands.set(commandName, require(path.join(commandPath, commandFile)))
+      this.commands.set(commandName, require(_.COMMAND_PATH(commandFile)))
     }
   }
 
@@ -30,7 +30,7 @@ export default class SlashHandler {
     const command = this.commands.get(commandName)
 
     if (!command) return
-    command.default(interaction, this, db, locale, player)
+    command.default({ interaction, slash: this, db, locale, player })
   }
 
   public async registCachedCommands (client: BotClient): Promise<void> {
