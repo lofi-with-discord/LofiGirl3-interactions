@@ -14,7 +14,7 @@ export default async function onReady (client: BotClient, slash: SlashHandler) {
 
   if (client.koreanbots) {
     setInterval(async () => {
-      const servers = client.totalGuildCount()
+      const servers = await client.totalGuildCount()
 
       await post(_.KOREANBOTS_GUILD_ENDPOINT(client))
         .set('Authorization', client.koreanbots!)
