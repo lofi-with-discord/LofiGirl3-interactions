@@ -43,11 +43,11 @@ export default async function ThemeCommand ({ interaction, db, locale, player }:
   if (!chosenTheme) return
   replyInteraction(res.interaction!, locale('theme_success', chosenTheme.name))
 
-  await db.changeTheme(interaction.guild!, chosenTheme.id)
-  player.clear()
-
   const userAt = member.voice.channel
   const meAt = interaction.guild?.me?.voice?.channel
+
+  await db.changeTheme(interaction.guild!, chosenTheme.id)
+  player.clear()
 
   if (!userAt || userAt.type !== 'GUILD_VOICE') return
 

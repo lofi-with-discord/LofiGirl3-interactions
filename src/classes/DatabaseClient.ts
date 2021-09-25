@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
 import knex, { Knex } from 'knex'
-import { ThemeData, ChannelData, UserData } from '../types'
 import { Channel, Guild, User } from 'discord.js'
+import { ThemeData, ChannelData, UserData } from '../types'
 
 dotenv.config()
 
@@ -44,8 +44,11 @@ export default class DatabaseClient {
   public unmarkChannel = (guild: Guild) =>
     this.db.delete().where('guild', guild.id).from('channels')
 
-  public changeTheme = (guild: Guild, theme: number) =>
-    this.db.update({ theme }).where('guild', guild.id).from('channels')
+  public async changeTheme (guild: Guild, theme: number) {
+    const hasAleady = await this.getChannelData(guild)
+    if (hasAleady) return this.db.update({ theme }).where('guild', guild.id).from('channels')
+    else return this.db.insert({ id: '0', guild: guild.id, theme }).from('channels')
+  }
 
   public getThemeData = async (id: number): Promise<ThemeData | undefined> =>
     (await this.db.select('*').from('themes').where('id', id).limit(1))[0]
