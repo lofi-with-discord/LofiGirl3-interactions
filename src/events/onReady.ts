@@ -7,8 +7,8 @@ import SlashHandler from '../classes/SlashHandler'
 export default async function onReady (client: BotClient, slash: SlashHandler) {
   if (!client.user) return
 
-  const sendStatus = () =>
-    client.user?.setActivity(_.BOT_ACTIVITY(client.voiceListenerCount, client.shard))
+  const sendStatus = async () =>
+    client.user?.setActivity(_.BOT_ACTIVITY(await client.voiceListenerCount(), client.shard))
 
   setInterval(sendStatus, _.BOT_ACTIVITY_INTERVAL)
 
@@ -17,11 +17,13 @@ export default async function onReady (client: BotClient, slash: SlashHandler) {
       const servers = await client.totalGuildCount()
         .catch(() => 0)
 
+      const shards = client.shard?.count || 1
+
       if (servers === 0) return
 
       await post(_.KOREANBOTS_GUILD_ENDPOINT(client))
         .set('Authorization', client.koreanbots!)
-        .send({ servers }).catch(() => {})
+        .send({ servers, shards }).catch(() => {})
     }, 60 * 1000)
   }
 

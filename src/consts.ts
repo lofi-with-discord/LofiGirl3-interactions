@@ -28,7 +28,7 @@ export default class Constants {
 
   static readonly BOT_ACTIVITY =
     (listenerCount: number, shard: ShardClientUtil | null) =>
-    `/help | with ${listenerCount} listeners ${shard ? 'on shard #' + shard.ids[0] : ''}`
+    `/help | with ${listenerCount} listeners${shard ? ' | shard #' + shard.ids[0] : ''}`
 
   static readonly BOT_ACTIVITY_INTERVAL = 30000
 

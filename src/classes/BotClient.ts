@@ -24,9 +24,15 @@ export default class BotClient extends Client {
     return prev + joined.members.filter((m) => !m.user.bot).size
   }
 
-  public get voiceListenerCount () {
-    return this.guilds.cache
-      .reduce(this._voiceListenerCount, 0)
+  public async voiceListenerCount () {
+    if (!this.shard) {
+      return this.guilds.cache
+        .reduce(this._voiceListenerCount, 0)
+    }
+
+    return await this.shard.broadcastEval((client) =>
+      client.guilds.cache.reduce(this._voiceListenerCount, 0))
+      .then((results) => results.reduce((prev, curr) => prev + curr, 0))
   }
 
   public get totalMemberCount () {
