@@ -1,6 +1,6 @@
 import dotenv from 'dotenv'
 import { del, post } from 'superagent'
-import { VoiceChannel } from 'discord.js'
+import { StageChannel, VoiceChannel } from 'discord.js'
 
 dotenv.config()
 
@@ -17,12 +17,12 @@ export default class PlayerClient {
       [...prev, `http://${host}:${curr}`], [] as string[])!
   }
 
-  public play = (channel: VoiceChannel) =>
+  public play = (channel: VoiceChannel | StageChannel) =>
     this.endpoints.forEach(async (endpoint) =>
       await post(`${endpoint}/connection?channel=${channel.id}`)
         .set('Authorization', this.password).catch(() => ({})))
 
-  public stop = (channel: VoiceChannel) =>
+  public stop = (channel: VoiceChannel | StageChannel) =>
     this.endpoints.forEach(async (endpoint) =>
       await del(`${endpoint}/connection?channel=${channel.id}`)
         .set('Authorization', this.password).catch(() => ({})))

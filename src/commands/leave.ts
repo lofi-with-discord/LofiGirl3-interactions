@@ -8,7 +8,7 @@ export default async function LeaveCommand ({ interaction, locale, player }: Com
   const meAt = interaction.guild?.me?.voice?.channel
   const userAt = member.voice.channel
 
-  if (!meAt || meAt.type !== 'GUILD_VOICE') {
+  if (!meAt || !['GUILD_VOICE', 'GUILD_STAGE_VOICE'].includes(meAt.type)) {
     replyInteraction(interaction, locale('leave_no_voice'))
     return
   }

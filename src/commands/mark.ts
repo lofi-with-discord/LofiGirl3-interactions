@@ -9,6 +9,7 @@ import {
   GuildChannel,
   GuildMember,
   MessageSelectOptionData,
+  StageChannel,
   VoiceChannel
 } from 'discord.js'
 
@@ -30,7 +31,7 @@ export default async function MarkCommand ({ interaction, db, locale, player }: 
       const channel = interaction.guild?.channels.cache.get(channelId)
 
       if (!channel) continue
-      if (channel.type !== 'GUILD_VOICE') continue
+      if (!['GUILD_VOICE', 'GUILD_STAGE_VOICE'].includes(channel.type)) continue
 
       options.push({
         label: channel.name,
@@ -52,7 +53,7 @@ export default async function MarkCommand ({ interaction, db, locale, player }: 
     targetChannel = interaction.guild?.channels.cache.get(res.result!) as GuildChannel
   }
 
-  if (!targetChannel || targetChannel.type !== 'GUILD_VOICE') {
+  if (!targetChannel || !['GUILD_VOICE', 'GUILD_STAGE_VOICE'].includes(targetChannel.type.toString())) {
     replyInteraction(interaction, locale('mark_select_not_exist', targetChannel.name))
     return
   }
@@ -60,7 +61,7 @@ export default async function MarkCommand ({ interaction, db, locale, player }: 
   const targetVoiceChannel = targetChannel as VoiceChannel
 
   if (!targetVoiceChannel.joinable) return replyInteraction(interaction, locale('mark_not_joinable'))
-  if (!targetVoiceChannel.speakable) return replyInteraction(interaction, locale('mark_not_speakable'))
+  if (!targetVoiceChannel.speakable && !(targetVoiceChannel instanceof StageChannel)) return replyInteraction(interaction, locale('mark_not_speakable'))
 
   await db.markChannel(interaction.guild!, targetVoiceChannel)
 
