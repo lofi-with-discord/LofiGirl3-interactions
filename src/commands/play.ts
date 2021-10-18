@@ -29,7 +29,7 @@ export default async function PlayCommand ({ interaction, db, locale, player }: 
       const channel = interaction.guild?.channels.cache.get(channelId)
 
       if (!channel) continue
-      if (['GUILD_VOICE', 'GUILD_STAGE_VOICE'].includes(channel.type)) continue
+      if (!['GUILD_VOICE', 'GUILD_STAGE_VOICE'].includes(channel.type)) continue
 
       options.push({
         label: channel.name,
