@@ -62,6 +62,7 @@ export default async function ThemeCommand ({ interaction, db, locale, player }:
       replyInteraction(res.interaction!, locale('theme_play_force_question', meAt.name), forceBtn)
 
       res.interaction = await resolveButton(res.interaction!)
+      if (!res.interaction) return
     }
   }
 

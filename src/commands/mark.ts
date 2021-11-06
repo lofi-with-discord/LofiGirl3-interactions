@@ -44,7 +44,7 @@ export default async function MarkCommand ({ interaction, db, locale, player }: 
     replyInteraction(interaction, embed, selMenu)
 
     const res = await resolveMenuSelection(interaction)
-    if (!res) return
+    if (!res.success) return
 
     selMenu.setDisabled(true)
     replyInteraction(interaction, embed, selMenu)

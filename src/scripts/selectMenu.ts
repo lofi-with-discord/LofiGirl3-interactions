@@ -15,7 +15,7 @@ export async function resolveMenuSelection (interaction: Interaction) {
   const filter = (i: MessageComponentInteraction) =>
     i.customId === interaction.id && interaction.user.id === i.user.id
 
-  const rawResponse = await interaction.channel?.awaitMessageComponent({ filter })
+  const rawResponse = await interaction.channel?.awaitMessageComponent({ filter }).catch(() => {})
   if (!rawResponse) return { success: false }
 
   await rawResponse.deferReply().catch(() => {})

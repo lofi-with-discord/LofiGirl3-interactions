@@ -42,7 +42,7 @@ export default async function PlayCommand ({ interaction, db, locale, player }: 
     replyInteraction(interaction, selMenu, embed)
 
     const res = await resolveMenuSelection(interaction)
-    if (!res) return
+    if (!res.success) return
 
     selMenu.setDisabled(true)
     replyInteraction(interaction, selMenu, embed)
@@ -72,6 +72,7 @@ export default async function PlayCommand ({ interaction, db, locale, player }: 
       replyInteraction(interaction, locale('play_force_question', meAt.name), forceBtn)
 
       interaction = await resolveButton(interaction)! as unknown as CommandInteraction
+      if (!interaction) return
     }
   }
 
