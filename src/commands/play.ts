@@ -7,7 +7,6 @@ import { createSelectMenu, resolveMenuSelection } from '../scripts/selectMenu'
 import {
   ApplicationCommandData,
   CommandInteraction,
-  GuildChannel,
   GuildMember,
   MessageSelectOptionData,
   StageChannel,
@@ -48,7 +47,7 @@ export default async function PlayCommand ({ interaction, db, locale, player }: 
     replyInteraction(interaction, selMenu, embed)
 
     interaction = res.interaction as unknown as CommandInteraction
-    targetChannel = interaction.guild?.channels.cache.get(res.result!) as GuildChannel
+    targetChannel = interaction.guild?.channels.cache.get(res.result!) as VoiceChannel | StageChannel
   }
 
   if (!targetChannel || !['GUILD_VOICE', 'GUILD_STAGE_VOICE'].includes(targetChannel.type.toString())) {

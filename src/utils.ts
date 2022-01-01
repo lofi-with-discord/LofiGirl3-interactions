@@ -13,7 +13,10 @@ export class DefaultEmbed extends MessageEmbed {
         : interactionOrFlag
 
     this.setThumbnail(_.EMBED_THUMBNAIL)
-    this.setAuthor(_.EMBED_AUTHOR_NAME(embedAuthor), _.EMBED_AUTHOR_ICON)
+    this.setAuthor({
+      name: _.EMBED_AUTHOR_NAME(embedAuthor),
+      iconURL: _.EMBED_AUTHOR_ICON
+    })
   }
 }
 
