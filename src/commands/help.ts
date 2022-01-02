@@ -9,8 +9,8 @@ import { ApplicationCommandData, EmbedField } from 'discord.js'
 export default async function HelpCommand ({ interaction, locale, slash }: CommandData) {
   const embed = new DefaultEmbed(interaction)
     .setImage(_.HELP_IMAGE_URL)
-    .setFooter(_.HELP_IMAGE_DESCRIPTION)
     .setDescription(_.HELP_BOT_DESCRIPTION)
+    .setFooter({ text: _.HELP_IMAGE_DESCRIPTION })
 
   const nextBtn = createButton(interaction, '➡️', 'SECONDARY')
   replyInteraction(interaction, embed, nextBtn)
