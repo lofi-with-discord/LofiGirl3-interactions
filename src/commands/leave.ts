@@ -34,7 +34,6 @@ export default async function LeaveCommand ({ interaction, locale, player }: Com
   const forceInteraction = await resolveButton(interaction)
   if (!forceInteraction) return
 
-  forceInteraction.update({})
   replyInteraction(interaction, locale('leave_success'))
 
   player.stop(meAt)
