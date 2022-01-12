@@ -11,6 +11,7 @@ import {
   StageChannel,
   VoiceChannel
 } from 'discord.js'
+import { ChannelTypes } from 'discord.js/typings/enums'
 
 export default async function MarkCommand ({ interaction, db, locale, player }: CommandData) {
   const member = interaction.member as GuildMember
@@ -75,5 +76,13 @@ export default async function MarkCommand ({ interaction, db, locale, player }: 
 export const metadata: ApplicationCommandData = {
   name: 'mark',
   description: 'you can set up a channel to play Lo-Fi all the time.',
-  options: [{ name: 'channel', type: 'CHANNEL', description: 'a channel to mark' }]
+  options: [{
+    name: 'channel',
+    type: 'CHANNEL',
+    description: 'a channel to play',
+    channel_types: [
+      ChannelTypes.GUILD_VOICE,
+      ChannelTypes.GUILD_STAGE_VOICE
+    ]
+  }]
 }

@@ -12,6 +12,7 @@ import {
   StageChannel,
   VoiceChannel
 } from 'discord.js'
+import { ChannelTypes } from 'discord.js/typings/enums'
 
 export default async function PlayCommand ({ interaction, db, locale, player }: CommandData) {
   const member = interaction.member as GuildMember
@@ -97,5 +98,13 @@ export default async function PlayCommand ({ interaction, db, locale, player }: 
 export const metadata: ApplicationCommandData = {
   name: 'play',
   description: 'Play a Lo-Fi stream with a set theme',
-  options: [{ name: 'channel', type: 'CHANNEL', description: 'a channel to play' }]
+  options: [{
+    name: 'channel',
+    type: 'CHANNEL',
+    description: 'a channel to play',
+    channel_types: [
+      ChannelTypes.GUILD_VOICE,
+      ChannelTypes.GUILD_STAGE_VOICE
+    ]
+  }]
 }
