@@ -1,11 +1,11 @@
-import { Interaction, MessageButton, MessageComponentInteraction } from 'discord.js'
+import { ButtonStyle, ExcludeEnum, Interaction, MessageButton, MessageComponentInteraction } from 'discord.js'
 
-export function createButton (interaction: Interaction, emoji?: string, style?: any, label?: string) {
+export function createButton (interaction: Interaction, emoji?: string, style?: ExcludeEnum<typeof ButtonStyle, 'Link'>, label?: string) {
   return new MessageButton({
     customId: interaction.id,
     emoji,
     label,
-    style
+    style: style || 'Secondary'
   })
 }
 
@@ -13,7 +13,7 @@ export function createLinkButton (url: string, emoji?: string, label?: string) {
   return new MessageButton({
     emoji,
     label,
-    style: 'LINK',
+    style: 'Link',
     url
   })
 }

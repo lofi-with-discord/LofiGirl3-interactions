@@ -8,7 +8,7 @@ export default async function LeaveCommand ({ interaction, locale, player }: Com
   const meAt = interaction.guild?.me?.voice?.channel
   const userAt = member.voice.channel
 
-  if (!meAt || !['GUILD_VOICE', 'GUILD_STAGE_VOICE'].includes(meAt.type)) {
+  if (!meAt || !['GuildVoice', 'GuildStageVoice'].includes(meAt.type)) {
     replyInteraction(interaction, locale('leave_no_voice'))
     return
   }
@@ -28,7 +28,7 @@ export default async function LeaveCommand ({ interaction, locale, player }: Com
     return
   }
 
-  const forceBtn = createButton(interaction, '🔨', 'DANGER')
+  const forceBtn = createButton(interaction, '🔨', 'Danger')
   replyInteraction(interaction, locale('leave_force_question_' + userIn, meAt.name), forceBtn)
 
   const forceInteraction = await resolveButton(interaction)

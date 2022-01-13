@@ -12,7 +12,7 @@ export default async function HelpCommand ({ interaction, locale, slash }: Comma
     .setDescription(_.HELP_BOT_DESCRIPTION)
     .setFooter({ text: _.HELP_IMAGE_DESCRIPTION })
 
-  const nextBtn = createButton(interaction, '➡️', 'SECONDARY')
+  const nextBtn = createButton(interaction, '➡️')
   replyInteraction(interaction, embed, nextBtn)
 
   const nextInteraction = await resolveButton(interaction)

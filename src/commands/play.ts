@@ -12,13 +12,12 @@ import {
   StageChannel,
   VoiceChannel
 } from 'discord.js'
-import { ChannelTypes } from 'discord.js/typings/enums'
 
 export default async function PlayCommand ({ interaction, db, locale, player }: CommandData) {
   const member = interaction.member as GuildMember
   const meAt = interaction.guild?.me?.voice.channel
 
-  let targetChannel = interaction.options.getChannel('channel') || member.voice.channel
+  let targetChannel = interaction.options.get('channel')?.channel || member.voice.channel
 
   if (!targetChannel) {
     const embed = new DefaultEmbed('mark')
@@ -29,7 +28,7 @@ export default async function PlayCommand ({ interaction, db, locale, player }: 
       const channel = interaction.guild?.channels.cache.get(channelId)
 
       if (!channel) continue
-      if (!['GUILD_VOICE', 'GUILD_STAGE_VOICE'].includes(channel.type)) continue
+      if (!['GuildVoice', 'GuildStageVoice'].includes(channel.type)) continue
 
       options.push({
         label: channel.name,
@@ -51,7 +50,7 @@ export default async function PlayCommand ({ interaction, db, locale, player }: 
     targetChannel = interaction.guild?.channels.cache.get(res.result!) as VoiceChannel | StageChannel
   }
 
-  if (!targetChannel || !['GUILD_VOICE', 'GUILD_STAGE_VOICE'].includes(targetChannel.type.toString())) {
+  if (!targetChannel || !['GuildVoice', 'GuildStageVoice'].includes(targetChannel.type.toString())) {
     replyInteraction(interaction, locale('play_select_not_exist', targetChannel.name))
     return
   }
@@ -68,7 +67,7 @@ export default async function PlayCommand ({ interaction, db, locale, player }: 
     if (membersIn > 1) {
       if (!movePerm) return replyInteraction(interaction, locale('play_force_fail', meAt.name))
 
-      const forceBtn = createButton(interaction, '🔨', 'DANGER')
+      const forceBtn = createButton(interaction, '🔨', 'Danger')
       replyInteraction(interaction, locale('play_force_question', meAt.name), forceBtn)
 
       interaction = await resolveButton(interaction)! as unknown as CommandInteraction
@@ -89,7 +88,7 @@ export default async function PlayCommand ({ interaction, db, locale, player }: 
   const embed = new DefaultEmbed('play')
     .setTitle(data.title)
     .setImage(data.image)
-    .setFooter(locale('play_detail_footer', '/'))
+    .setFooter({ text: locale('play_detail_footer', '/') })
     .setDescription(locale('play_detail', data.author.name, data.url))
 
   replyInteraction(interaction, embed)
@@ -100,11 +99,8 @@ export const metadata: ApplicationCommandData = {
   description: 'Play a Lo-Fi stream with a set theme',
   options: [{
     name: 'channel',
-    type: 'CHANNEL',
+    type: 'Channel',
     description: 'a channel to play',
-    channel_types: [
-      ChannelTypes.GUILD_VOICE,
-      ChannelTypes.GUILD_STAGE_VOICE
-    ]
+    channel_types: <any>[2, 13]
   }]
 }

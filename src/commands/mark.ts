@@ -11,11 +11,10 @@ import {
   StageChannel,
   VoiceChannel
 } from 'discord.js'
-import { ChannelTypes } from 'discord.js/typings/enums'
 
 export default async function MarkCommand ({ interaction, db, locale, player }: CommandData) {
   const member = interaction.member as GuildMember
-  let targetChannel = interaction.options.getChannel('channel') || member.voice.channel
+  let targetChannel = interaction.options.get('channel')?.channel || member.voice.channel
 
   if (!member.permissions.has('MANAGE_CHANNELS')) {
     replyInteraction(interaction, locale('mark_no_permission', member.displayName))
@@ -31,7 +30,7 @@ export default async function MarkCommand ({ interaction, db, locale, player }: 
       const channel = interaction.guild?.channels.cache.get(channelId)
 
       if (!channel) continue
-      if (!['GUILD_VOICE', 'GUILD_STAGE_VOICE'].includes(channel.type)) continue
+      if (!['GuildVoice', 'GuildStageVoice'].includes(channel.type)) continue
 
       options.push({
         label: channel.name,
@@ -53,7 +52,7 @@ export default async function MarkCommand ({ interaction, db, locale, player }: 
     targetChannel = interaction.guild?.channels.cache.get(res.result!) as VoiceChannel | StageChannel
   }
 
-  if (!targetChannel || !['GUILD_VOICE', 'GUILD_STAGE_VOICE'].includes(targetChannel.type.toString())) {
+  if (!targetChannel || !['GuildVoice', 'GuildStageVoice'].includes(targetChannel.type.toString())) {
     replyInteraction(interaction, locale('mark_select_not_exist', targetChannel.name))
     return
   }
@@ -78,11 +77,8 @@ export const metadata: ApplicationCommandData = {
   description: 'you can set up a channel to play Lo-Fi all the time.',
   options: [{
     name: 'channel',
-    type: 'CHANNEL',
+    type: 'Channel',
     description: 'a channel to play',
-    channel_types: [
-      ChannelTypes.GUILD_VOICE,
-      ChannelTypes.GUILD_STAGE_VOICE
-    ]
+    channel_types: <any>[2, 13]
   }]
 }

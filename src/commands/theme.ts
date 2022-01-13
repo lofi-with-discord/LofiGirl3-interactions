@@ -49,7 +49,7 @@ export default async function ThemeCommand ({ interaction, db, locale, player }:
   await db.changeTheme(interaction.guild!, chosenTheme.id)
   player.clear()
 
-  if (!userAt || userAt.type !== 'GUILD_VOICE') return
+  if (!userAt || userAt.type !== 'GuildVoice') return
 
   if (meAt) {
     const membersIn = meAt.members.filter((m) => !m.user.bot && m.id !== interaction.user.id).size
@@ -58,7 +58,7 @@ export default async function ThemeCommand ({ interaction, db, locale, player }:
     if (membersIn > 1) {
       if (!movePerm) return replyInteraction(res.interaction!, locale('theme_play_force_fail', meAt.name))
 
-      const forceBtn = createButton(interaction, '🔨', 'DANGER')
+      const forceBtn = createButton(interaction, '🔨', 'Danger')
       replyInteraction(res.interaction!, locale('theme_play_force_question', meAt.name), forceBtn)
 
       res.interaction = await resolveButton(res.interaction!)
@@ -79,7 +79,7 @@ export default async function ThemeCommand ({ interaction, db, locale, player }:
   const embed2 = new DefaultEmbed(interaction)
     .setTitle(data.title)
     .setImage(data.image)
-    .setFooter(locale('theme_play_detail_footer', '/'))
+    .setFooter({ text: locale('theme_play_detail_footer', '/') })
     .setDescription(locale('theme_play_detail', data.author.name, data.url))
 
   replyInteraction(res.interaction!, embed2)

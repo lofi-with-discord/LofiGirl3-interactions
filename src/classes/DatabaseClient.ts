@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
 import knex, { Knex } from 'knex'
-import { Channel, Guild, User } from 'discord.js'
-import { ThemeData, ChannelData, UserData } from '../types'
+import { Channel, Guild } from 'discord.js'
+import { ThemeData, ChannelData } from '../types'
 
 dotenv.config()
 
@@ -20,15 +20,6 @@ export default class DatabaseClient {
       }
     })
   }
-
-  public getUserData = async (user: User): Promise<UserData | undefined> =>
-    (await this.db.select('*').from('users').where('id', user.id).limit(1))[0]
-
-  public appendUserData = (data: UserData): Promise<void> =>
-    this.db.insert(data).into('users')
-
-  public updateUserData = (data: UserData): Promise<void> =>
-    this.db.update(data).where('id', data.id).into('users')
 
   public getChannelData = async (channelOrGuild: Channel | Guild): Promise<ChannelData | undefined> =>
     (await this.db.select('*').from('channels')

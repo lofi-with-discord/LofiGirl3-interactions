@@ -12,7 +12,7 @@
     "@types/yt-search": "^2.3.2",
     "bufferutil": "^4.0.3",
     "discord-api-types": "^0.22.0",
-    "discord.js": "^13.5.0",
+    "discord.js": "^14.0.0-dev.1642032388.2bb40fd",
     "dotenv": "^10.0.0",
     "i18n": "^0.13.3",
     "knex": "^0.95.9",

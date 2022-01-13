@@ -5,11 +5,6 @@ import SlashHandler from '../classes/SlashHandler'
 import PlayerClient from '../classes/PlayerClient'
 import DatabaseClient from '../classes/DatabaseClient'
 
-export interface UserData {
-  id: string
-  locale: string
-}
-
 export interface ChannelData {
   id: string
   guild: string

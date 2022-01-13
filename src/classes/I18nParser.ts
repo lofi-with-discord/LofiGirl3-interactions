@@ -11,6 +11,7 @@ export default class I18nParser extends I18n {
     const directory = PATH + '/i18n'
     this.configure({
       directory,
+      defaultLocale: 'en-US',
       locales:
         readdirSync(directory)
           .filter((v) => v.endsWith('.json'))
